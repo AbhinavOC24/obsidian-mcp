@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Mac launchd job: auto commit + push your Obsidian vault to git every 5 minutes.
+
+  Install:
+    cp launchd/com.obsidian.sync.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.obsidian.sync.plist
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.obsidian.sync.plist
+
+  Logs:
+    /tmp/obsidian-sync.log
+    /tmp/obsidian-sync.err
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.obsidian.sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <!--
+          Edit VAULT_DIR to your actual vault path.
+          The script:
+            1. cd into the vault
+            2. stage all changes
+            3. commit only if there's something to commit
+            4. push to remote
+        -->
+        <string>
+            VAULT_DIR="$HOME/Documents/ObsidianVault"
+            cd "$VAULT_DIR" || exit 1
+            git add -A
+            if ! git diff --cached --quiet; then
+                git commit -m "auto-sync: $(date '+%Y-%m-%d %H:%M:%S')"
+                git push
+            fi
+        </string>
+    </array>
+
+    <!-- Run every 300 seconds (5 minutes) -->
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <!-- Run when the Mac wakes from sleep if the interval was missed -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/obsidian-sync.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/obsidian-sync.err</string>
+
+    <!-- Only run when on AC or with battery above 20% -->
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment — never commit real secrets
+.env
+
+# SQLite database (review state is valuable — back it up separately)
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Embedding model cache
+.cache/
+
+# TypeScript diagnostics
+*.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,10 @@
+[Unit]
+Description=Obsidian Vault — git pull timer (every 5 minutes)
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=obsidian-vault-sync.service
+
+[Install]
+WantedBy=timers.target

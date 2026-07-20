@@ -1,0 +1,12 @@
+[Unit]
+Description=Obsidian Vault — Auto git pull on EC2
+After=network.target
+
+[Service]
+Type=oneshot
+User=ec2-user
+WorkingDirectory=/home/ec2-user/vault
+ExecStart=/usr/bin/git pull --ff-only
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=obsidian-vault-sync
