@@ -321,6 +321,7 @@ export function registerVaultTools(server: McpServer): void {
             text: JSON.stringify(
               {
                 vault_path: vaultRoot,
+                database_path: path.resolve(process.env["DB_PATH"] ?? "./data/obsidian-mcp.db"),
                 notes: noteCount,
                 questions: questionCount,
                 due_for_review: dueCount,

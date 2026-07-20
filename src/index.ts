@@ -2,7 +2,7 @@
 /**
  * Obsidian MCP Server — Entry Point
  *
- * Environment variables:
+ * Environment variables (loaded from .env automatically):
  *   VAULT_PATH      Path to the Obsidian vault (required)
  *   TRANSPORT       "stdio" (default) | "http"
  *   PORT            HTTP port when TRANSPORT=http (default 3000)
@@ -11,7 +11,7 @@
  *   LOG_LEVEL       debug | info | warn | error (default info)
  */
 
-import "node:process";
+import "dotenv/config";
 import path from "node:path";
 import fs from "node:fs";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -62,6 +62,7 @@ async function main(): Promise<void> {
   const transport = process.env["TRANSPORT"] ?? "stdio";
 
   if (transport === "http") {
+    console.log("-------HTTP------")
     startHttpServer(mcpServer);
   } else {
     // stdio transport — used for local dev and Claude Desktop
