@@ -11,6 +11,24 @@ export function createMcpServer(): McpServer {
     version: "1.0.0",
   });
 
+  // ─── Live Logging Wrapper ──────────────────────────────────────────────────
+  // Intercepts all tool registrations to log calls to stderr live.
+  // Must use console.error so that it doesn't corrupt stdout in stdio mode.
+  const originalRegisterTool = server.registerTool.bind(server);
+  server.registerTool = (name: string, schema: any, handler: any) => {
+    return originalRegisterTool(name, schema, async (args: any) => {
+      console.error(`[mcp] 🔌 Tool invoked: "${name}" | args: ${JSON.stringify(args)}`);
+      try {
+        const result = await handler(args);
+        console.error(`[mcp] ✅ Tool "${name}" succeeded`);
+        return result;
+      } catch (err: any) {
+        console.error(`[mcp] ❌ Tool "${name}" failed: ${err?.message || err}`);
+        throw err;
+      }
+    });
+  };
+
   // ─── Register all tools ───────────────────────────────────────────────────
 
   // Vault reading tools (M2/M3)
